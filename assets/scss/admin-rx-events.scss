@@ -1,0 +1,29 @@
+.post-type-rx-events{
+	.postbox-container{
+		#event-settings{
+			.inside{
+				margin: 0;
+				padding: 0;
+			}
+			.cx-component {
+				padding: 0px;
+				.cx-tab__body{
+					box-shadow: none;
+				}
+				.cx-tab__tabs{
+					border: none;
+				}
+				.cx-tab__content{
+					border-top: none;
+					border-right: none;
+					border-bottom: none;
+				}
+				.start_event, .end_event{
+					.cx-settings__content{
+						display: block;
+					}
+				}
+			}
+		}
+	}
+}
