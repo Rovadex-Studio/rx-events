@@ -51,7 +51,7 @@ if ( ! class_exists( 'Rx_Events' ) ) {
 			add_action( 'after_setup_theme', array( $this, 'framework_loader' ), -20 );
 
 			// Load the include files.
-			add_action( 'after_setup_theme', array( $this, 'includes' ), 11 );
+			add_action( 'after_setup_theme', array( $this, 'includes' ) );
 
 			// Register assets.
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 10 );
@@ -126,8 +126,8 @@ if ( ! class_exists( 'Rx_Events' ) ) {
 		 */
 		public function includes() {
 			if ( is_admin() ) {
-				require_once( RX_EVENTS_DIR . 'admin\class-rx-register-post-type.php' );
 				require_once( RX_EVENTS_DIR . 'admin\class-rx-event-post-meta.php' );
+				require_once( RX_EVENTS_DIR . 'admin\class-rx-register-post-type.php' );
 			} else {
 
 			}

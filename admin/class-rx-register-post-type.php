@@ -36,7 +36,8 @@ if ( ! class_exists( 'Rx_Registe_Event_Post' ) ) {
 			add_action( 'init', array( $this, 'register_event_tags' ), 0 );
 			add_action( 'init', array( $this, 'register_event_categories' ), 1 );
 			add_action( 'init', array( $this, 'register_post_types' ), 2 );
-			add_action( 'init', array( $this, 'init_post_meta' ), 3 );
+			//add_action( 'init', array( $this, 'init_post_meta' ), 3 );
+			$this->init_post_meta();
 		}
 
 		/**

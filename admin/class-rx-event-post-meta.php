@@ -34,8 +34,9 @@ if ( ! class_exists( 'Rx_Event_Post_Meta' ) ) {
 		 */
 		public function __construct() {
 			// Metaboxes rendering.
-			add_action( 'load-post.php',     array( $this, 'init' ), 10 );
-			add_action( 'load-post-new.php', array( $this, 'init' ), 10 );
+			//add_action( 'load-post.php',     array( $this, 'init' ), 10 );
+			//add_action( 'load-post-new.php', array( $this, 'init' ), 10 );
+			$this->init();
 		}
 
 		/**
@@ -99,6 +100,11 @@ if ( ! class_exists( 'Rx_Event_Post_Meta' ) ) {
 					'parent' => 'settings_tab',
 					'title'  => esc_html__( 'Date And Time', 'rx-events' ),
 				),
+				'schedule'  => array(
+					'type'   => 'settings',
+					'parent' => 'settings_tab',
+					'title'  => esc_html__( 'Schedule', 'rx-events' ),
+				),
 				'participant' => array(
 					'type'   => 'settings',
 					'parent' => 'settings_tab',
@@ -114,14 +120,16 @@ if ( ! class_exists( 'Rx_Event_Post_Meta' ) ) {
 					'parent' => 'settings_tab',
 					'title'  => esc_html__( 'Media', 'rx-events' ),
 				),
-				'custom_fields' => array(
+				/*'custom_fields' => array(
 					'type'   => 'settings',
 					'parent' => 'settings_tab',
-					'title'  => esc_html__( 'Custom fields', 'rx-events' ),
-				),
+					'title'  => esc_html__( 'Custom Fields', 'rx-events' ),
+				),*/
 			));
 
 			$settings = apply_filters( 'rx_event_meta', array(
+
+// Information
 				'event_description'      => array(
 					'type'        => 'textarea',
 					'parent'      => 'information',
@@ -144,25 +152,7 @@ if ( ! class_exists( 'Rx_Event_Post_Meta' ) ) {
 					//'description' => esc_html__( 'Label displayed before the date, for example, this may be the text "Start events".', 'rx-events' ),
 				),
 
-				/*'date_repeater'      => array(
-					'type'        => 'repeater',
-					'parent'      => 'date',
-					'id'          => 'date_repeater',
-					'name'        => 'date_repeater',
-					'value'       => array(
-						'item-0' => array(
-							'date_label'   =>  esc_html__( 'Start Time', 'rx-events' ),
-							'repeat_event' => 'not_repeat',
-							'time_format'  => 'hours_24',
-						),
-					),
-					'title_field' => 'date_label',
-					'fields'      => array(
-
-					),
-					'label'       => '',
-					'add_label'   => esc_html__( 'Add Time.', 'rx-events' ),
-				),*/
+// Date
 				'time_format' => array(
 					'type'        => 'select',
 					'parent'      => 'date',
@@ -199,7 +189,7 @@ if ( ! class_exists( 'Rx_Event_Post_Meta' ) ) {
 					'title'  => esc_html__( 'Start Event', 'rx-events' ),
 				),
 				'start_date'      => array(
-					'type'        => 'text',
+					'type'        => 'datepicker',
 					'parent'      => 'start_event',
 					'view_wrapping' => false,
 					'label'       => esc_html__( 'Start Date:', 'rx-events' ),
@@ -213,6 +203,8 @@ if ( ! class_exists( 'Rx_Event_Post_Meta' ) ) {
 					'label'       => esc_html__( 'Day of the week:', 'rx-events' ),
 					//'description' => esc_html__( 'The frequency of repeat events.', 'rx-events' ),
 					'value'       => 'not_repeat',
+					'multiple'     => true,
+					'filter'       => true,
 					'options'     => array(
 						'sunday'      => esc_html__( 'Sunday', 'rx-events' ),
 						'monday'    => esc_html__( 'Monday', 'rx-events' ),
@@ -221,6 +213,9 @@ if ( ! class_exists( 'Rx_Event_Post_Meta' ) ) {
 						'thursday'  => esc_html__( 'Thursday', 'rx-events' ),
 						'friday'  => esc_html__( 'Friday', 'rx-events' ),
 						'saturday'  => esc_html__( 'Saturday', 'rx-events' ),
+					),
+					'conditions' => array(
+						'repeat_event' => 'every_week',
 					),
 				),
 				'start_hours'      => array(
@@ -257,9 +252,6 @@ if ( ! class_exists( 'Rx_Event_Post_Meta' ) ) {
 					'options'     => array(
 						'am' => esc_html__( 'AM', 'rx-events' ),
 						'pm' => esc_html__( 'PM', 'rx-events' ),
-					),
-					'conditions' => array(
-						'repeat_event' => 'not_repeat',
 					),
 				),
 
@@ -329,10 +321,240 @@ if ( ! class_exists( 'Rx_Event_Post_Meta' ) ) {
 						'am' => esc_html__( 'AM', 'rx-events' ),
 						'pm' => esc_html__( 'PM', 'rx-events' ),
 					),
-					'conditions' => array(
-						'repeat_event' => 'not_repeat',
+				),
+
+// Schedule
+				'event_schedule'      => array(
+					'type'        => 'repeater',
+					'parent'      => 'schedule',
+					'label'       => esc_html__( 'Event Stages', 'rx-events' ),
+					'add_label'   => esc_html__( 'Add Stage', 'rx-events' ),
+					'title_field' => 'stage_title',
+					'fields'      => array(
+						'stage_start_hours'      => array(
+							'type'          => 'stepper',
+							'name'          => 'stage_start_hours',
+							'id'            => 'stage_start_hours',
+							'class'         => 'stages-time',
+							'view_wrapping' => false,
+							'value'         => '0',
+							'max_value'     => '23',
+							'min_value'     => '0',
+							'step_value'    => '1',
+							'label'         => esc_html__( 'Hours:', 'rx-events' ),
+							'value'         => '0',
+						),
+						'stage_start_minutes'      => array(
+							'type'        => 'stepper',
+							'name'        => 'stage_start_minutes',
+							'id'        => 'stage_start_minutes',
+							'view_wrapping' => false,
+							'value'       => '0',
+							'max_value'   => '59',
+							'min_value'   => '0',
+							'step_value'  => '1',
+							'label'       => esc_html__( 'Minutes:', 'rx-events' ),
+							'value'       => '0',
+						),
+						'stage_start_time_of_day' => array(
+							'type'        => 'select',
+							'name'        => 'stage_start_time_of_day',
+							'id'        => 'stage_start_time_of_day',
+							'view_wrapping' => false,
+							'label'       => esc_html__( 'Time Of Day:', 'rx-events' ),
+							'value'       => 'am',
+							'options'     => array(
+								'am' => esc_html__( 'AM', 'rx-events' ),
+								'pm' => esc_html__( 'PM', 'rx-events' ),
+							),
+						),
+						'stage_end_hours'      => array(
+							'type'        => 'stepper',
+							'name'        => 'stage_end_hours',
+							'id'        => 'stage_end_hours',
+							'view_wrapping' => false,
+							'value'       => '0',
+							'max_value'   => '23',
+							'min_value'   => '0',
+							'step_value'  => '1',
+							'label'       => esc_html__( 'Hours:', 'rx-events' ),
+							//'description' => esc_html__( 'Label displayed before the date, for example, this may be the text "Start events".', 'rx-events' ),
+							'value'       => '',
+						),
+						'stage_end_minutes'      => array(
+							'type'        => 'stepper',
+							'name'        => 'stage_end_minutes',
+							'id'        => 'stage_end_minutes',
+							'view_wrapping' => false,
+							'value'       => '0',
+							'max_value'   => '59',
+							'min_value'   => '0',
+							'step_value'  => '1',
+							'label'       => esc_html__( 'Minutes:', 'rx-events' ),
+							'value'       => '',
+						),
+						'stage_end_time_of_day' => array(
+							'type'        => 'select',
+							'name'        => 'stage_end_time_of_day',
+							'id'        => 'stage_end_time_of_day',
+							'view_wrapping' => false,
+							'label'       => esc_html__( 'Time Of Day:', 'rx-events' ),
+							'value'       => 'am',
+							'options'     => array(
+								'am' => esc_html__( 'AM', 'rx-events' ),
+								'pm' => esc_html__( 'PM', 'rx-events' ),
+							),
+						),
+						'stage_title' => array(
+							'type'        => 'text',
+							'name'        => 'stage_title',
+							'id'        => 'stage_title',
+							'label'       => esc_html__( 'Title:', 'rx-events' ),
+						),
+						'stage_description' => array(
+							'type'        => 'textarea',
+							'name'        => 'stage_description',
+							'id'        => 'stage_description',
+							'label'       => esc_html__( 'Description:', 'rx-events' ),
+						),
 					),
 				),
+
+// Location
+				'venue_name'      => array(
+					'type'        => 'text',
+					'parent'      => 'location',
+					'title'       => esc_html__( 'Venue Name:', 'rx-events' ),
+					//'description' => esc_html__( 'Label displayed before the date, for example, this may be the text "Start events".', 'rx-events' ),
+				),
+				'address'      => array(
+					'type'        => 'text',
+					'parent'      => 'location',
+					'title'       => esc_html__( 'Address:', 'rx-events' ),
+					//'description' => esc_html__( 'Label displayed before the date, for example, this may be the text "Start events".', 'rx-events' ),
+				),
+				'city'      => array(
+					'type'        => 'text',
+					'parent'      => 'location',
+					'title'       => esc_html__( 'City:', 'rx-events' ),
+					//'description' => esc_html__( 'Label displayed before the date, for example, this may be the text "Start events".', 'rx-events' ),
+				),
+				'country'      => array(
+					'type'        => 'text',
+					'parent'      => 'location',
+					'title'       => esc_html__( 'Country:', 'rx-events' ),
+					//'description' => esc_html__( 'Label displayed before the date, for example, this may be the text "Start events".', 'rx-events' ),
+				),
+				'state'      => array(
+					'type'        => 'text',
+					'parent'      => 'location',
+					'title'       => esc_html__( 'State or Province:', 'rx-events' ),
+					//'description' => esc_html__( 'Label displayed before the date, for example, this may be the text "Start events".', 'rx-events' ),
+				),
+				'postal_code'      => array(
+					'type'        => 'text',
+					'parent'      => 'location',
+					'title'       => esc_html__( 'Postal Code:', 'rx-events' ),
+					//'description' => esc_html__( 'Label displayed before the date, for example, this may be the text "Start events".', 'rx-events' ),
+				),
+				'google_map'      => array(
+					'type'        => 'text',
+					'parent'      => 'location',
+					'title'       => esc_html__( 'Google Map:', 'rx-events' ),
+					//'description' => esc_html__( 'Label displayed before the date, for example, this may be the text "Start events".', 'rx-events' ),
+				),
+
+// Participant
+				'organizers_title'      => array(
+					'type'        => 'text',
+					'parent'      => 'participant',
+					'title'       => esc_html__( 'Organizers Title:', 'rx-events' ),
+				),
+				'organizers'      => array(
+					'type'        => 'repeater',
+					'parent'      => 'participant',
+					'label'       => esc_html__( 'Event Organizers', 'rx-events' ),
+					'add_label'   => esc_html__( 'Add People', 'rx-events' ),
+					'title_field' => 'stage_title',
+					'fields'      => array(
+						'organizer_label'      => array(
+							'type'        => 'text',
+							'name'        => 'organizer_label',
+							'id'          => 'organizer_label',
+							'label'       => esc_html__( 'Organizer Label:', 'rx-events' ),
+						),
+						'organizer' => array(
+							'type'        => 'select',
+							'name'        => 'organizer',
+							'id'          => 'organizer',
+							'multiple'     => true,
+							'filter'       => true,
+							'label'       => esc_html__( 'Organizer:', 'rx-events' ),
+							'options'     => array(),
+						),
+					),
+				),
+
+				'participants_title'      => array(
+					'type'        => 'text',
+					'parent'      => 'participant',
+					'title'       => esc_html__( 'Participants Title:', 'rx-events' ),
+				),
+				'participants'      => array(
+					'type'        => 'repeater',
+					'parent'      => 'participant',
+					'label'       => esc_html__( 'Event Participants', 'rx-events' ),
+					'add_label'   => esc_html__( 'Add Participant', 'rx-events' ),
+					'title_field' => 'stage_title',
+					'fields'      => array(
+						'participant_label'      => array(
+							'type'        => 'text',
+							'name'        => 'participants_label',
+							'id'          => 'participants_label',
+							'label'       => esc_html__( 'Participant Label:', 'rx-events' ),
+						),
+						'participant' => array(
+							'type'        => 'select',
+							'name'        => 'participant',
+							'id'          => 'participant',
+							'multiple'    => true,
+							'filter'      => true,
+							'label'       => esc_html__( 'Participant:', 'rx-events' ),
+							'options'     => array(),
+						),
+					),
+				),
+
+				'sponsors_title'      => array(
+					'type'        => 'text',
+					'parent'      => 'participant',
+					'title'       => esc_html__( 'Sponsors Title:', 'rx-events' ),
+				),
+				'sponsors'      => array(
+					'type'        => 'repeater',
+					'parent'      => 'participant',
+					'label'       => esc_html__( 'Event Sponsors', 'rx-events' ),
+					'add_label'   => esc_html__( 'Add Sponsor', 'rx-events' ),
+					'title_field' => 'stage_title',
+					'fields'      => array(
+						'sponsors_label'      => array(
+							'type'        => 'text',
+							'name'        => 'sponsor_label',
+							'id'          => 'sponsor_label',
+							'label'       => esc_html__( 'Sponsor Label:', 'rx-events' ),
+						),
+						'sponsors' => array(
+							'type'        => 'select',
+							'name'        => 'sponsor',
+							'id'          => 'sponsor',
+							'multiple'    => true,
+							'filter'      => true,
+							'label'       => esc_html__( 'Sponsor:', 'rx-events' ),
+							'options'     => array(),
+						),
+					),
+				),
+
 			));
 
 
