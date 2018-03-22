@@ -36,8 +36,7 @@ if ( ! class_exists( 'Rx_Registe_Event_Post' ) ) {
 			add_action( 'init', array( $this, 'register_event_tags' ), 0 );
 			add_action( 'init', array( $this, 'register_event_categories' ), 1 );
 			add_action( 'init', array( $this, 'register_post_types' ), 2 );
-			//add_action( 'init', array( $this, 'init_post_meta' ), 3 );
-			$this->init_post_meta();
+			add_action( 'init', array( $this, 'init_post_meta' ), 3 );
 		}
 
 		/**
@@ -73,7 +72,7 @@ if ( ! class_exists( 'Rx_Registe_Event_Post' ) ) {
 				),
 				'show_in_nav_menus' => true,
 				'show_in_admin_bar' => true,
-				'menu_icon'         => 'dashicons dashicons-carrot',
+				'menu_icon'         => 'dashicons-calendar-alt',
 				'show_in_rest'      => true,
 				'public'            => true,
 				'rewrite'           => true,

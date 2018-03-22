@@ -34,9 +34,8 @@ if ( ! class_exists( 'Rx_Event_Post_Meta' ) ) {
 		 */
 		public function __construct() {
 			// Metaboxes rendering.
-			//add_action( 'load-post.php',     array( $this, 'init' ), 10 );
-			//add_action( 'load-post-new.php', array( $this, 'init' ), 10 );
-			$this->init();
+			add_action( 'load-post.php',     array( $this, 'init' ), 10 );
+			add_action( 'load-post-new.php', array( $this, 'init' ), 10 );
 		}
 
 		/**

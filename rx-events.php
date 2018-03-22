@@ -51,7 +51,7 @@ if ( ! class_exists( 'Rx_Events' ) ) {
 			add_action( 'after_setup_theme', array( $this, 'framework_loader' ), -20 );
 
 			// Load the include files.
-			add_action( 'after_setup_theme', array( $this, 'includes' ) );
+			add_action( 'after_setup_theme', array( $this, 'includes' ), 0 );
 
 			// Register assets.
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 10 );
@@ -59,8 +59,6 @@ if ( ! class_exists( 'Rx_Events' ) ) {
 
 			// Enqueue assets.
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ), 11 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_assets' ), 11 );
-
 		}
 
 		/**
@@ -126,8 +124,7 @@ if ( ! class_exists( 'Rx_Events' ) ) {
 		 */
 		public function includes() {
 			if ( is_admin() ) {
-				require_once( RX_EVENTS_DIR . 'admin\class-rx-event-post-meta.php' );
-				require_once( RX_EVENTS_DIR . 'admin\class-rx-register-post-type.php' );
+				require_once( trailingslashit( RX_EVENTS_DIR ) . 'admin/class-rx-events-admin.php' );
 			} else {
 
 			}
@@ -176,16 +173,6 @@ if ( ! class_exists( 'Rx_Events' ) ) {
 		public function enqueue_assets() {
 			wp_enqueue_script('rx-events');
 			wp_enqueue_style('rx-events');
-		}
-
-		/**
-		 * Enqueue admin assets.
-		 *
-		 * @since 1.0.0
-		 */
-		public function admin_enqueue_assets() {
-			wp_enqueue_script('admin-rx-events');
-			wp_enqueue_style('admin-rx-events');
 		}
 
 		/**
