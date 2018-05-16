@@ -90,6 +90,7 @@ if ( ! class_exists( 'Cherry_X_Post_Meta' ) ) {
 		 * @return [type] [description]
 		 */
 		public function init_builder( $hook ) {
+			global $post;
 
 			if ( ! in_array( $hook, array( 'post-new.php', 'post.php' ) ) ) {
 				return;
@@ -106,6 +107,8 @@ if ( ! class_exists( 'Cherry_X_Post_Meta' ) ) {
 			}
 
 			$this->builder = call_user_func( $this->args['builder_cb'] );
+
+			$this->get_fields( $post );
 
 		}
 
@@ -280,7 +283,7 @@ if ( ! class_exists( 'Cherry_X_Post_Meta' ) ) {
 			 */
 			do_action( 'cx_post_meta/meta_box/before' );
 
-			$this->get_fields( $post );
+			$this->builder->render();
 
 			/**
 			 * Hook fires after metabox output finished.
@@ -353,8 +356,6 @@ if ( ! class_exists( 'Cherry_X_Post_Meta' ) ) {
 					call_user_func( array( $this->builder, $register_callback ), $field );
 				}
 			}
-
-			$this->builder->render();
 		}
 
 		/**
@@ -411,15 +412,20 @@ if ( ! class_exists( 'Cherry_X_Post_Meta' ) ) {
 			}
 
 			/**
-			 * Hook on current metabox saving
+			 * Hook on before current metabox saving
 			 */
-			do_action( 'cx_post_meta/save_meta/' . $this->args['id'] );
+			do_action( 'cx_post_meta/before_save/' . $this->args['id'], $post_id, $post );
 
 			if ( is_array( $this->args['single'] ) && isset( $this->args['single']['key'] ) ) {
 				$this->save_meta_mod( $post_id );
 			} else {
 				$this->save_meta_option( $post_id );
 			}
+
+			/**
+			 * Hook on after current metabox saving
+			 */
+			do_action( 'cx_post_meta/after_save/' . $this->args['id'], $post_id, $post );
 
 		}
 

@@ -316,7 +316,6 @@
 				this.iconpicker.init();
 				this.dimensions.init();
 				this.repeater.init();
-				this.datepicker.init();
 			},
 
 			// CX-Switcher
@@ -422,7 +421,7 @@
 						.on( 'cx-control-init', this.selectRender.bind( this ) );
 				},
 
-				selectRender: function() {
+				selectRender: function( event ) {
 					var $target = ( event._target ) ? event._target : $( 'body' );
 
 					$( this.selectClass, $target ).each( this.select2Init.bind( this ) );
@@ -452,7 +451,7 @@
 						.on( 'cx-control-init', this.mediaRender.bind( this ) );
 				},
 
-				mediaRender: function() {
+				mediaRender: function( event ) {
 					var target   = ( event._target ) ? event._target : $( 'body' ),
 						$buttons = $( '.cx-upload-button', target );
 
@@ -723,6 +722,7 @@
 				},
 
 				switchLinked: function( event ) {
+					console.log('test');
 
 					var self       = event.data.self,
 						$this      = $( this ),
@@ -914,6 +914,9 @@
 						value,
 						parentItem;
 
+					console.log(titleFilds);
+					console.log($this.closest( '.' + titleFilds + '-wrap' ));
+
 					if ( titleFilds && $this.closest( '.' + titleFilds + '-wrap' )[0] ) {
 						value       = $this.val(),
 						parentItem  = $this.closest( self.repeaterItemClass );
@@ -940,31 +943,7 @@
 					return this;
 				}
 
-			},
-
-			// CX_Control_Datepicker
-			datepicker: {
-				class: 'input.cx-ui-datepicker',
-
-				init: function() {
-					$( document )
-						.on( 'ready.cxDatepicker', this.render.bind( this ) )
-						.on( 'cx-control-init', this.render.bind( this ) );
-				},
-
-
-				render: function( event ) {
-					var $target = ( event._target ) ? event._target : $( 'body' );
-
-					$( this.class, $target ).each( this.datePickerInit.bind( this ) );
-				},
-
-				datePickerInit: function ( index, element ) {
-					var $this = $( element );
-
-					$this.datepicker();
-				}
-			}//End CX_Control_Datepicker
+			}
 		},
 
 		utils: {
